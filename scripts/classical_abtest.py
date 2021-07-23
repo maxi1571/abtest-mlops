@@ -10,9 +10,9 @@ from sklearn.preprocessing import OrdinalEncoder
 from math import ceil
 from statsmodels.stats.proportion import proportions_ztest,proportion_confint
 
-path = 'data/AdSmartABdata.csv'
+path = 'data/AdSmartABdata1.csv'
 repo = '/home/michael/abtest-mlops'
-version = 'v_os_5'
+version = 'v_Browser'
 
 data_url = dvc.api.get_url(
 	path = path,
@@ -23,6 +23,7 @@ data_url = dvc.api.get_url(
 mlflow.set_experiment('demo')
 
 df = pd.read_csv(data_url)
+
 df.loc[(df['yes']==1)|(df['no']==1),'response']=1
 df['response']=df['response'].fillna(0)
 
@@ -54,7 +55,8 @@ ab_test.reset_index(drop=True, inplace=True)
 
 ord_enc = OrdinalEncoder()
 ab_test['device_make'] = ord_enc.fit_transform(ab_test[['device_make']])
-ab_test['browser'] = ord_enc.fit_transform(ab_test[['browser']])
+if version!='v_os':
+	ab_test['browser'] = ord_enc.fit_transform(ab_test[['browser']])
 
 conversion_rates=ab_test.groupby('experiment')['response']
 #standard deviation of the proportion
