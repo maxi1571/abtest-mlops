@@ -3,15 +3,34 @@ import statsmodels.stats.api as sms
 import matplotlib as mpl
 import pandas as pd
 import numpy as np
+import dvc.api
+import mlflow
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OrdinalEncoder
 from math import ceil
 from statsmodels.stats.proportion import proportions_ztest,proportion_confint
 
-path = '../data'
-df = pd.read_csv(path+'/AdSmartABdata.csv')
+path = 'data/AdSmartABdata.csv'
+repo = '/home/michael/abtest-mlops'
+version = 'v_os_5'
+
+data_url = dvc.api.get_url(
+	path = path,
+	repo = repo,
+	rev=version
+	)
+
+mlflow.set_experiment('demo')
+
+df = pd.read_csv(data_url)
 df.loc[(df['yes']==1)|(df['no']==1),'response']=1
 df['response']=df['response'].fillna(0)
+
+# Log data params
+mlflow.log_param('data_url', data_url)
+mlflow.log_param('data_version', version)
+mlflow.log_param('input_rows', df.shape[0])
+mlflow.log_param('input_cols', df.shape[1])
 
 # Sample size calculation
 effect_size=sms.proportion_effectsize(0.20,0.25)
@@ -22,9 +41,13 @@ required_n=sms.NormalIndPower().solve_power(
     ratio=1)
 required_n=ceil(required_n)
 
-#random sampling from the dataset to abtain a sample size of 1092
-control_sample=df[df['experiment']=='control'].sample(n=required_n, random_state=22)
-exposed_sample=df[df['experiment']=='exposed'].sample(n=required_n, random_state=22)
+if required_n>=len(df):
+	
+	control_sample=df[df['experiment']=='control'].sample(n=int(len(df)*0.12), random_state=22)
+	exposed_sample=df[df['experiment']=='exposed'].sample(n=int(len(df)*0.12), random_state=22)
+else: 
+	control_sample=df[df['experiment']=='control'].sample(n=required_n, random_state=22)
+	exposed_sample=df[df['experiment']=='exposed'].sample(n=required_n, random_state=22) 
 
 ab_test=pd.concat([control_sample,exposed_sample],axis=0)
 ab_test.reset_index(drop=True, inplace=True)
@@ -46,7 +69,7 @@ conversion_rates.style.format('{:.3f}')
 control_results=ab_test[ab_test['experiment']=='control']['response']
 exposed_results=ab_test[ab_test['experiment']=='exposed']['response']
 
-n_con=control_results.count()
+n_con=control_results.count() 
 n_exp=exposed_results.count()
 successes=[control_results.sum(),exposed_results.sum()]
 nobs=[n_con, n_exp]
