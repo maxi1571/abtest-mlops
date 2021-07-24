@@ -10,9 +10,9 @@ from sklearn.preprocessing import OrdinalEncoder
 from math import ceil
 from statsmodels.stats.proportion import proportions_ztest,proportion_confint
 
-path = 'data/AdSmartABdata1.csv'
+path = 'data/AdSmartABdata2.csv'
 repo = '/home/michael/abtest-mlops'
-version = 'v_Browser'
+version = 'v3'
 
 data_url = dvc.api.get_url(
 	path = path,
