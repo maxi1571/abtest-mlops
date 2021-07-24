@@ -2,9 +2,9 @@ import dvc.api
 import pandas as pd
 import numpy as np
 
-path = 'data/AdSmartABdata.csv'
-repo = '/home/bethelhem/abtest-mlops'
-version = 'v0'
+path = 'data/AdSmartABdata1.csv'
+repo = '/home/michael/abtest-mlops'
+version = 'v2'
 data_url = dvc.api.get_url(
   path = path,
   repo = repo,
