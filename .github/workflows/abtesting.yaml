@@ -20,5 +20,5 @@ jobs:
       - name: cml_run
         run: |
           # Your ML workflow goes here
-          pip install -r requirements.txt
+          pip install -r requirments.txt 
           python model.py
