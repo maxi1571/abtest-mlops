@@ -1,0 +1,15 @@
+artifact_uri: file:///home/michael/abtest-mlops/scripts/mlruns/1/f36cf873cac441ef98322f039270903a/artifacts
+end_time: 1627108710853
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: f36cf873cac441ef98322f039270903a
+run_uuid: f36cf873cac441ef98322f039270903a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1627108710796
+status: 3
+tags: []
+user_id: root
